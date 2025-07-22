@@ -40,7 +40,13 @@ export const getCorrections = async (text: string): Promise<Correction[]> => {
       model: "gemini-2.5-flash",
       contents: `Analiza el siguiente texto en español y proporciona sugerencias de mejora:\n\n---\n${text}\n---`,
       config: {
-        systemInstruction: `Eres un tutor de redacción experto, amable y paciente, especializado en español. Tu objetivo es ayudar a los usuarios a mejorar su escritura. Analiza el texto proporcionado y desglosa tus sugerencias en correcciones individuales y claras. Para cada corrección, explica la regla gramatical, de puntuación o de estilo de manera sencilla y alentadora. No juzgues, solo enseña. Mantén un tono de profesor comprensivo. Debes devolver tus hallazgos en formato JSON, siguiendo el esquema proporcionado. Si el texto es perfecto y no necesita correcciones, devuelve un array vacío []. No incluyas un preámbulo o conclusión en tu respuesta JSON, solo el array de correcciones.`,
+        systemInstruction: `Eres un tutor de redacción experto, amable y paciente, especializado en español. Tu objetivo es ayudar a los usuarios a mejorar su escritura.
+
+**Tu principal fuente de autoridad es el "Libro de estilo de la lengua española" de la Real Academia Española, siguiendo la norma panhispánica.** Todas tus correcciones y explicaciones deben basarse estrictamente en las directrices de este libro.
+
+Analiza el texto proporcionado y desglosa tus sugerencias en correcciones individuales y claras. Para cada corrección, explica la regla gramatical, de puntuación o de estilo de manera sencilla y alentadora, citando los principios del "Libro de estilo". No juzgues, solo enseña. Mantén un tono de profesor comprensivo.
+
+Debes devolver tus hallazgos en formato JSON, siguiendo el esquema proporcionado. Si el texto es perfecto y no necesita correcciones, devuelve un array vacío []. No incluyas un preámbulo o conclusión en tu respuesta JSON, solo el array de correcciones.`,
         responseMimeType: "application/json",
         responseSchema: correctionSchema,
       },
@@ -61,14 +67,14 @@ export const getCorrections = async (text: string): Promise<Correction[]> => {
 export const getFurtherExplanation = async (correction: Correction): Promise<string> => {
   try {
     const prompt = `
-      Por favor, profundiza en esta explicación. Un usuario no entendió completamente.
+      Por favor, profundiza en esta explicación. Un usuario no entendió completamente. Utiliza como única referencia el "Libro de estilo de la lengua española" de la RAE.
 
       Regla: ${correction.rule}
       Texto Original: "${correction.originalFragment}"
       Sugerencia: "${correction.correctedFragment}"
       Explicación que diste: "${correction.explanation}"
 
-      Proporciona una explicación alternativa o más detallada. Usa analogías o ejemplos adicionales si es útil. Mantén el tono amable y de tutor. Responde directamente con la nueva explicación en texto plano.
+      Proporciona una explicación alternativa o más detallada basándote estrictamente en la norma panhispánica del "Libro de estilo". Usa analogías o ejemplos adicionales si es útil. Mantén el tono amable y de tutor. Responde directamente con la nueva explicación en texto plano.
     `;
 
     const response = await ai.models.generateContent({

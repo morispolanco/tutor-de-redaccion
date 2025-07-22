@@ -1,5 +1,6 @@
 {
   "name": "Tutor de Redacción AI",
   "description": "Un chatbot interactivo que actúa como un tutor de redacción avanzado en español. Revisa gramática, estilo y vocabulario, explicando cada corrección de forma clara y paciente para facilitar el aprendizaje.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "prompt": ""
 }
